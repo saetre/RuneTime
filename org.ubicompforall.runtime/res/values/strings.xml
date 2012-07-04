@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">UbiCompForAll.Runetime</string>
+    <string name="you_are_at">You are at</string>
+    <string name="default_loc">0 0</string>
+    <string name="the_closest_poi">The closest Points of Interest are: </string>
+    <string name="near_bus">Closest Bus-Stop:</string>
+
+</resources>
