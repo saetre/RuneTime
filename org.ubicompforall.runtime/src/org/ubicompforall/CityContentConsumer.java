@@ -34,25 +34,22 @@ public class CityContentConsumer { // implements DatabaseInterface{
 	 */
 	public TreeMap<String, Double[]>
 	 getAllPois(){
-		TreeMap<String, Double[]>
-		 pois = new TreeMap<String, Double[] >(){
-			private static final long serialVersionUID = -8963932168936419533L;
-//			{put("En", "1"); put("To", "2");}
-		};
+		TreeMap<String, Double[]> pois = new TreeMap<String, Double[] >();
+		String error = "";
 		
 		// A "projection" defines the columns that will be returned for each row
 		String[] mProjection = {
 		    //_ID,							// Contract class constant for the _ID column name
 		    //UserDictionary.Words.LOCALE	// Contract class constant for the locale column name
-		    SQLiteConnector.NAME_COL,		// Contract class constant for the name column name
+		    SQLiteConnector.POI_NAME_COL,		// Contract class constant for the name column name
 		    SQLiteConnector.LAT_COL,	// Contract class constant for the location column name
 		    SQLiteConnector.LON_COL	// Contract class constant for the location column name
 		};
-		String mSelectionClause = "POI.address_id = ADDRESS._id";	// Defines a string to contain the selection clause
+		String mSelectionClause = "POI.address_id = ADDR._id";	// Defines a string to contain the selection clause
 		String[] mSelectionArgs = null;	// Initializes an array to contain selection arguments
-		String mSortClause = SQLiteConnector.NAME_COL;	// Defines a string to contain the selection clause
+		String mSortClause = SQLiteConnector.POI_NAME_COL;	// Defines a string to contain the selection clause
 
-		RunetimeActivity.debug(-1, "Looking for "+CONTENT_URI );
+		RunetimeActivity.debug(0, "Looking for "+CONTENT_URI );
 		Cursor mCursor = null;
 		try{
 			mCursor = ctx.getContentResolver().query(
@@ -66,7 +63,8 @@ public class CityContentConsumer { // implements DatabaseInterface{
 	    }catch (SQLiteException e){
 	    	e.printStackTrace();
 	    	RunetimeActivity.debug(-1, e.getMessage() );
-	    	RunetimeActivity.debug(-1, "POI_TABLE select "+mProjection[1]+" etc..." );
+	    	error = e.getMessage();
+	    	RunetimeActivity.debug(-1, "ERROR in POI_TABLE select "+mProjection[1]+" etc..." );
 	    }//try - catch
 
 		//pois.put("Cursor", mCursor.toString() );
@@ -79,7 +77,7 @@ public class CityContentConsumer { // implements DatabaseInterface{
 				pois.put( mCursor.getString(0), new Double[]{ mCursor.getDouble(1), mCursor.getDouble(2) } );
 			}
 		}else{
-			RunetimeActivity.debug(-1, "Why NO Cursor!?" );
+			RunetimeActivity.debug(-1, "NO Cursor! "+error );
 		}
 		return pois;
 	}//getAllPois

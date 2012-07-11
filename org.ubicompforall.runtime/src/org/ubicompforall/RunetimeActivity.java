@@ -8,7 +8,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -134,22 +133,25 @@ public class RunetimeActivity extends Activity {
 	    return sb.toString();
 	}//convertStreamToString
 
+
 	
 
 	// Information Screen Methods
 
 	private void updateCityBusStop(String address) {
 		EditText edit = (EditText) findViewById(R.id.nearBus_edit);
-		String httpGet = "http://busstjener.idi.ntnu.no/busstuc/oracle?q=";
-		//String httpGet = "busstjener.idi.ntnu.no/busstuc/oracle?q=";
 		String text;
+
+		//address = replaceSeries( address );
+		address = address.replaceAll( "-\\d+", "" );
+		debug(-1, "Address: "+address );
+		String httpGet = "http://busstjener.idi.ntnu.no/busstuc/oracle?q=";
 		try {
-			text = connect(httpGet + URLEncoder.encode(address, "utf-8") );
+			text = connect(httpGet + URLEncoder.encode("fra "+address, "utf-8") );
 		} catch (UnsupportedEncodingException e) {
 			text = "No Bus Found";
 		}
 		edit.setText(text);
-
 	}// updateCityBusStop
 
 	public void updatePoiList(Double[] myPos, TreeMap<String, Double[]> pois) {
