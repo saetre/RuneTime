@@ -1,4 +1,4 @@
-package org.ubicompforall;
+package org.ubicompforall.runtime;
 
 import android.app.ProgressDialog;
 import android.content.Context;
