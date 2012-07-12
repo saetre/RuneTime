@@ -2,9 +2,9 @@ package org.ubicompforall.runtime;
 
 import java.util.TreeMap;
 
-import org.ubicompforall.CityExplorer.data.SQLiteConnector;
+import org.ubicompforall.cityexplorer.data.SQLiteConnector;
 
-//import org.ubicompforall.CityExplorer.data.CityContentProvider;
+//import org.ubicompforall.cityexplorer.data.CityContentProvider;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -15,9 +15,9 @@ public class CityContentConsumer { // implements DatabaseInterface{
 
 	//Move to final static Contract class
 	public static final String SCHEME = "content";
-	public static final String AUTHORITY = "org.ubicompforall.CityExplorer.provider";
+	public static final String AUTHORITY = "org.ubicompforall.cityexplorer.provider";
 	public static final String POI_TABLE = "PoiTable";
-	//private static final String _ID = "_ID";
+	//private static final String _ID_COL = "_ID_COL";
 
 	//public static final Uri CONTENT_URI = Uri( AUTHORITY, POI_TABLE );
 	public static final Uri CONTENT_URI = new Uri.Builder().scheme(SCHEME).authority(AUTHORITY).appendPath(POI_TABLE).build();
@@ -39,7 +39,7 @@ public class CityContentConsumer { // implements DatabaseInterface{
 		
 		// A "projection" defines the columns that will be returned for each row
 		String[] mProjection = {
-		    //_ID,							// Contract class constant for the _ID column name
+		    //_ID_COL,							// Contract class constant for the _ID_COL column name
 		    //UserDictionary.Words.LOCALE	// Contract class constant for the locale column name
 		    SQLiteConnector.POI_NAME_COL,		// Contract class constant for the name column name
 		    SQLiteConnector.LAT_COL,	// Contract class constant for the location column name
@@ -54,7 +54,7 @@ public class CityContentConsumer { // implements DatabaseInterface{
 		try{
 			mCursor = ctx.getContentResolver().query(
 					//UserDictionary.Words.CONTENT_URI,   // The content URI of the words table == vnd.android.cursor.dir/vnd.google.userword
-					//CONTENT_URI = org.ubicompforall.CityExplorer.provider/P,   // The content URI of the words table
+					//CONTENT_URI = org.ubicompforall.cityexplorer.provider/P,   // The content URI of the words table
 					CONTENT_URI,   // The content URI of the words table
 					mProjection,                        // The columns to return for each row
 					mSelectionClause,                   // Selection criteria

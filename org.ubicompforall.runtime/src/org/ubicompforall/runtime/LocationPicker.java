@@ -117,7 +117,7 @@ public class LocationPicker implements LocationListener, OnCancelListener{
 		Toast.makeText(ctx, "Enabled: "+provider, Toast.LENGTH_SHORT).show(); //
 		//ctx.startActivity(new Intent(ctx, LocationPickerActivity.class));
 	}
-	
+
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
 		Toast.makeText(ctx, "Provider "+provider+", Status="+status, Toast.LENGTH_SHORT).show();

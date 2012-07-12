@@ -1,6 +1,6 @@
-//package org.ubicompforall.CityExplorer.data;
+//package org.ubicompforall.cityexplorer.data;
 //
-//import org.ubicompforall.CityExplorer.CityExplorer;
+//import org.ubicompforall.cityexplorer.CityExplorer;
 //
 //import android.content.ContentProvider;
 //import android.content.ContentValues;
@@ -12,7 +12,7 @@
 //
 //public class CityContentProvider extends ContentProvider{
 //
-//	public static final String AUTHORITY = "org.ubicompforall.CityExplorer.provider";
+//	public static final String AUTHORITY = "org.ubicompforall.cityexplorer.provider";
 //	public static final String POI_TABLE = "PoiTable";
 //	//public static final String SQLITE_ALL_TABLE = "Poi";
 //	public static final String SQLITE_ALL_TABLE = SQLiteConnector.ALL_TABLE;
@@ -85,8 +85,8 @@
 //
 //	    /*
 //	     * Sets the code for a single row (Poi) to 2. In this case, the "#" wildcard is used.
-//	     * "content://org.ubicompforall.CityExplorer.provider/poiTable/3" matches, but
-//	     * "content://org.ubicompforall.CityExplorer.provider/poiTable does not.
+//	     * "content://org.ubicompforall.cityexplorer.provider/poiTable/3" matches, but
+//	     * "content://org.ubicompforall.cityexplorer.provider/poiTable does not.
 //	     */
 //	    sUriMatcher.addURI(AUTHORITY, POI_TABLE+"/#", 2);
 //

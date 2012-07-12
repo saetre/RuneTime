@@ -4,7 +4,6 @@
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/CityExplorer"/>
-	<classpathentry exported="true" kind="lib" path="/CityExplorer/src/org/ubicompforall/CityExplorer/data" sourcepath="/CityExplorer/src/org/ubicompforall/CityExplorer/data"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/CityExplorer"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
