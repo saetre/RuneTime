@@ -13,11 +13,18 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.ubicompforall.runetime.R;
+import org.ubicompforall.runtime.R;
+
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.text.format.Time;
 import android.util.Log;
 import android.widget.EditText;
 
@@ -39,7 +46,39 @@ public class RunetimeActivity extends Activity {
 		// longitude:
 		lp = new LocationPicker(this);
 		lp.retrieveLocation(); // And print it in the EditText
+		showNotification();
 	}// onCreate
+
+	private void showNotification() {
+		debug(-1, "Show notification" );
+		Context context = this;
+		//String ns = Context.NOTIFICATION_SERVICE;
+		NotificationManager mNotificationManager = (NotificationManager) context.getSystemService( Context.NOTIFICATION_SERVICE );
+
+		int icon = R.drawable.ic_launcher;
+		CharSequence tickerText = "Hello";
+		long when = System.currentTimeMillis();
+
+		Notification notification = new Notification(icon, tickerText, when);
+
+		CharSequence contentTitle = "My notification";
+		CharSequence contentText = "Hello World!";
+
+		//To make an Intent with no action, use this instead of Intent:
+		notification.setLatestEventInfo(context, contentTitle, contentText, PendingIntent.getActivity(getApplicationContext(), 0, new Intent(), 0) );
+	
+		//Intent showIntent = new Intent(context, org.ubicompforall.CityExplorer.CityExplorer.class);
+		Intent showIntent = new Intent();
+		Time now = new Time();
+		now.setToNow();
+		showIntent.putExtra( "time", now.toString() );
+		PendingIntent contentIntent = PendingIntent.getActivity(context, 0, showIntent, 0); 
+
+	    notification.setLatestEventInfo(context, "Arriving at POI:", "Poi-ID", contentIntent);
+
+		mNotificationManager.notify(999, notification);
+	
+	}//showNotification
 
 	@Override
 	public void onPause() {
