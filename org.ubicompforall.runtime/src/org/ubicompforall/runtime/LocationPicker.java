@@ -103,7 +103,7 @@ public class LocationPicker extends AsyncTask<String, String, String> implements
 					}
 	            }
 	            // After receiving first GPS Fix dismiss the Progress Dialog
-	            //dialog.dismiss();
+	            dialog.dismiss();
 	        }
 	    };
 	
