@@ -9,54 +9,78 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.Toast;
 
-/******************************************************************
- * Private Class
- */
-public class LocationPicker implements LocationListener, OnCancelListener{
-	
-	private RunetimeActivity ctx;
+//public class LocationPicker implements LocationListener, OnCancelListener{
+public class LocationPicker extends AsyncTask<String, String, String> implements LocationListener, OnCancelListener{
+
+	private RunetimeActivity context;
 	private boolean stopFlag;
 	private ProgressDialog dialog;
 	private LocationManager locationManager;
+	private double latitude, longitude;
 	
 	public LocationPicker(RunetimeActivity ctx) {
-	    this.ctx = ctx;
-	    initLocation( ctx );
+	    this.context = ctx;
 	}
 	
 	public void debug(int level, String str){
 		RunetimeActivity.debug(level,str);
 	}
-	
-	public void disableProviders( ) {
-		locationManager = (LocationManager) ctx.getSystemService( Context.LOCATION_SERVICE );
+
+	@Override
+    protected void onPreExecute() {
+		super.onPreExecute();
+	}
+
+	@Override
+    protected String doInBackground(String... params) {
+	    initLocation( );
+		return null;
+    }
+
+    @Override
+    protected void onProgressUpdate(String... values) {
+        super.onProgressUpdate(values);
+        debug(-1, "Update the progress!");
+		Toast.makeText(context, "Latitude : " + latitude + " Longitude : " + longitude , Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void onPostExecute( String result ) {
+        super.onPostExecute( result );
+        Toast.makeText( context, "Done: "+result, Toast.LENGTH_LONG ).show();
+    }
+
+    public void disableProviders( ) {
+		locationManager = (LocationManager) context.getSystemService( Context.LOCATION_SERVICE );
 		locationManager.removeUpdates( this );
 		debug(0, "Removed updates for "+locationManager.getProviders(true) );
+        dialog.dismiss();
 	}//disableProviders
 
 	/**
 	 * Init the Network/GPS/WiFi Location Provider.
 	 */
-	public void initLocation( Context context ){
+	public void initLocation(){ // Context context ){
 		String provider = getProvider();
-		debug(0, "Init Location provider: "+provider );
+		debug(0, "provider: "+provider );
 		// Acquire a reference to the system Location Manager
 		locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 	
 		Location lastKnownLocation = locationManager.getLastKnownLocation( provider );
-		//debug(0, "context is "+context );
+		debug(0, "context is "+context );
 		//if ( context instanceof RunetimeActivity ){
 			onLocationChanged( lastKnownLocation );
 			// Register the listener with the Location Manager to receive location updates
 			locationManager.requestLocationUpdates( provider, 0, 0, this );
 		//}
-	}//initGPS
+	}//initLocation
 
 	public String getProvider(){
-	    locationManager = (LocationManager) ctx.getSystemService( Context.LOCATION_SERVICE );
+	    locationManager = (LocationManager) context.getSystemService( Context.LOCATION_SERVICE );
 	    Criteria criteria = new Criteria();
 	    //criteria.setAccuracy(Criteria.ACCURACY_FINE);
 	    criteria.setAltitudeRequired(false);
@@ -70,11 +94,16 @@ public class LocationPicker implements LocationListener, OnCancelListener{
 	    Runnable showWaitDialog = new Runnable() {
 	        @Override
 	        public void run() {
-	            while (!stopFlag) {
-	                // Wait for first GPS Fix (do nothing until loc != null)
+	            while ( ! stopFlag) {
+	                debug(0, "Wait for first position fix (do nothing until loc != null)" );
+	                try {
+						Thread.sleep( 1000 ); //One sec
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 	            }
 	            // After receiving first GPS Fix dismiss the Progress Dialog
-	            dialog.dismiss();
+	            //dialog.dismiss();
 	        }
 	    };
 	
@@ -84,7 +113,7 @@ public class LocationPicker implements LocationListener, OnCancelListener{
 	    }else{
 	    	debug(2, "Using provided: "+provider );
 	    	locationManager.requestLocationUpdates(provider, 0, 0, this);
-		    dialog = ProgressDialog.show(ctx, "Please wait...", "Retrieving Location data...", true);
+		    dialog = ProgressDialog.show(context, "Please wait...", "Retrieving Location data...", true);
 		    dialog.setCancelable(true);
 		    dialog.setOnCancelListener(this);
 		    Thread t = new Thread( showWaitDialog );
@@ -95,11 +124,17 @@ public class LocationPicker implements LocationListener, OnCancelListener{
 	@Override
 	public void onLocationChanged(Location location) {
 		if (location != null) {
-			double latitude = location.getLatitude();
-			double longitude = location.getLongitude();
+			float[] results = new float[] { 0, 0, 0 }; // Meter[0], start-heading[1], stop-heading[2]
+			Location.distanceBetween(latitude, longitude, location.getLatitude(), location.getLongitude(), results );
+			if ( results[0] >100 ){
+				latitude = location.getLatitude();
+				longitude = location.getLongitude();
+
+				debug(-1, "Moved "+results[0]+" meters in direction "+results[1] );
+				context.updateLocationScreens(latitude, longitude);
+				RunetimeActivity.showNotification( context.getBaseContext() );
+			}
 			stopFlag = true;
-			//Toast.makeText(ctx, "Latitude : " + latitude + " Longitude : " + longitude , Toast.LENGTH_LONG).show();
-			ctx.updateLocationScreens(latitude, longitude);
 		}
 		//locationManager.removeUpdates(this);
 	}//onLocationChanged
@@ -107,27 +142,35 @@ public class LocationPicker implements LocationListener, OnCancelListener{
 	@Override
 	public void onProviderDisabled(String provider) {
 		debug(0, "Location_Provider DISABLED: "+provider );
-		Toast.makeText(ctx, "Disabled: "+provider, Toast.LENGTH_LONG).show();
+		Toast.makeText(context, "Disabled: "+provider, Toast.LENGTH_LONG).show();
 		Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-		ctx.startActivity(intent);
+		context.startActivity(intent);
 	}
 	
 	@Override
 	public void onProviderEnabled(String provider) {
-		Toast.makeText(ctx, "Enabled: "+provider, Toast.LENGTH_SHORT).show(); //
+		Toast.makeText(context, "Enabled: "+provider, Toast.LENGTH_SHORT).show(); //
 		//ctx.startActivity(new Intent(ctx, LocationPickerActivity.class));
 	}
 
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
-		Toast.makeText(ctx, "Provider "+provider+", Status="+status, Toast.LENGTH_SHORT).show();
+		Toast.makeText(context, "Provider "+provider+", Status="+status, Toast.LENGTH_LONG).show();
 	}
 	
 	@Override
 	public void onCancel(DialogInterface dialog) {
-		debug(0, "Why?" );
+		debug(-1, "Why?" );
 	    stopFlag = true;
 	    locationManager.removeUpdates(this);
+	}
+
+	public double getLatitude() {
+		return latitude;
+	}
+
+	public double getLongitude() {
+		return longitude;
 	}
 }//class LocationPicker
 

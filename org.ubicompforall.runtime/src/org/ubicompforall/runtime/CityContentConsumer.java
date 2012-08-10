@@ -32,9 +32,9 @@ public class CityContentConsumer { // implements DatabaseInterface{
 	/***
 	 * @return An array with all pois from the __current__ (?) database
 	 */
-	public TreeMap<String, Double[]>
+	public TreeMap<String, double[]>
 	 getAllPois(){
-		TreeMap<String, Double[]> pois = new TreeMap<String, Double[] >();
+		TreeMap<String, double[]> pois = new TreeMap<String, double[] >();
 		String error = "";
 		
 		// A "projection" defines the columns that will be returned for each row
@@ -74,8 +74,9 @@ public class CityContentConsumer { // implements DatabaseInterface{
 
 			//for (int i=0; mCursor.moveToNext(); i++){
 			while( mCursor.moveToNext() ){
-				pois.put( mCursor.getString(0), new Double[]{ mCursor.getDouble(1), mCursor.getDouble(2) } );
+				pois.put( mCursor.getString(0), new double[]{ mCursor.getDouble(1), mCursor.getDouble(2) } );
 			}
+			RunetimeActivity.debug(-1, "Getting tired after "+pois.size()+" pois?" );
 		}else{
 			RunetimeActivity.debug(-1, "NO Cursor! "+error );
 		}
