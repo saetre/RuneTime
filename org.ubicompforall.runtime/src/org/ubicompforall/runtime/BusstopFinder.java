@@ -25,7 +25,7 @@ public class BusstopFinder {
 				String[] latLngName = text.split("\t");
 				pois.put( latLngName[2], new double[]{ Double.parseDouble(latLngName[0]), Double.parseDouble(latLngName[1]) } );
 			}
-			RunetimeActivity.debug(-1, "Getting tired after "+pois.size()+" busstops?" );
+			RunetimeActivity.debug(-1, "Stopped after "+pois.size()+" busstops?" );
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

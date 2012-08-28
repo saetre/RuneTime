@@ -22,7 +22,7 @@ public class LocationPicker extends AsyncTask<String, String, String> implements
 	private LocationManager locationManager;
 	private double latitude, longitude;
 	
-	public LocationPicker(RunetimeActivity ctx) {
+	public LocationPicker( RunetimeActivity ctx ) {
 	    this.context = ctx;
 	}
 	
@@ -103,6 +103,7 @@ public class LocationPicker extends AsyncTask<String, String, String> implements
 					}
 	            }
 	            // After receiving first GPS Fix dismiss the Progress Dialog
+	    		debug(0, "Received stopflag for "+locationManager.getProviders(true) );
 	            dialog.dismiss();
 	        }
 	    };
@@ -113,7 +114,7 @@ public class LocationPicker extends AsyncTask<String, String, String> implements
 	    }else{
 	    	debug(2, "Using provided: "+provider );
 	    	locationManager.requestLocationUpdates(provider, 0, 0, this);
-		    dialog = ProgressDialog.show(context, "Please wait...", "Retrieving Location data...", true);
+		    dialog = ProgressDialog.show( context, "Please wait...", "Retrieving Location data...", true);
 		    dialog.setCancelable(true);
 		    dialog.setOnCancelListener(this);
 		    Thread t = new Thread( showWaitDialog );
@@ -159,9 +160,10 @@ public class LocationPicker extends AsyncTask<String, String, String> implements
 	}
 	
 	@Override
-	public void onCancel(DialogInterface dialog) {
-		debug(-1, "Why?" );
-	    stopFlag = true;
+	public void onCancel( DialogInterface dInterface ) {
+		debug(-1, "Why?" );	//For example when orientation changes!
+		//stopFlag = true;
+		dialog.dismiss();
 	    locationManager.removeUpdates(this);
 	}
 

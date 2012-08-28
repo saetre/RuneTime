@@ -36,19 +36,16 @@ import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.text.format.Time;
-import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
 //@SuppressWarnings("unused")
 public class RunetimeActivity extends Activity {
-	// private static final String TAG = "RuneTime";
-	private static final String TAG = "cityTime";
-	public static final int DEBUG = 1;
 
 	public static final int REQUEST_KILL_BROWSER = 11;
 	private static boolean DATACONNECTION_NOTIFIED = false;
@@ -90,7 +87,7 @@ public class RunetimeActivity extends Activity {
 				e.printStackTrace();
 			}
 		}
-		lp.retrieveLocation(); // And print it in the TextView
+//		lp.retrieveLocation(); // And print it in the TextView // TODO: Does not work without GPS!!!
 //		if (connectDialog != null){
 //			connectDialog.show();
 //		}
@@ -104,9 +101,24 @@ public class RunetimeActivity extends Activity {
 
 	@Override
 	public void onDestroy(){
+		debug(-1, "re-open dialog?" );
+		//removeDialog(DIALOG_LOGIN_ID); // remove loading dialog
+		if (lp != null){
+			if ( lp.getStatus() != AsyncTask.Status.FINISHED){
+				lp.cancel(true); //cancel AsyncTask
+		    }
+		}
 		super.onDestroy();
 		//lp.disableProviders(); //How to leave it running? Service?
 	}
+
+	/***
+	 * Debug method to include the filename, line-number and method of the
+	 * caller
+	 */
+	public static void debug(int d, String msg) {
+		RuntimeApplication.debug(d, msg );
+	}//debug
 
 	public static void showNotification( Context context ) {
 		debug(0, "Show notification" );
@@ -136,39 +148,6 @@ public class RunetimeActivity extends Activity {
 		mNotificationManager.notify(999, notification);
 	
 	}//showNotification
-
-	/*******************************************************************
-	 * STATIC METHODS
-	 */
-
-	/***
-	 * Debug method to include the filename, line-number and method of the
-	 * caller
-	 */
-	public static void debug(int d, String msg) {
-		if (DEBUG >= d) {
-			StackTraceElement[] st = Thread.currentThread().getStackTrace();
-			int stackLevel = 2;
-			while (stackLevel < st.length - 1
-					&& (st[stackLevel].getMethodName().equals("debug") || st[stackLevel]
-							.getMethodName().matches("access\\$\\d+"))) {
-				// || st[stackLevel].getMethodName().matches("run")
-				stackLevel++;
-			}
-			StackTraceElement e = st[stackLevel];
-			if (d < 0) { // error
-				Log.e(TAG,
-						e.getMethodName() + ": " + msg + " at ("
-								+ e.getFileName() + ":" + e.getLineNumber()
-								+ ")");
-			} else { // debug
-				Log.d(TAG,
-						e.getMethodName() + ": " + msg + " at ("
-								+ e.getFileName() + ":" + e.getLineNumber()
-								+ ")");
-			}// if debug, else error
-		} // if verbose enough
-	} // debug
 
 	
 	public static String connect(String url) {
